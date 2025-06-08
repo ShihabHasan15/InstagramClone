@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ProfileFragment"
+    android:background="@color/white">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:id="@+id/lock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/lock"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/lock"
+                android:fontFamily="@font/alata"
+                android:gravity="center"
+                android:text="shihab_hridoy_"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/drop_down_arrow"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/username"
+                android:layout_marginLeft="5dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_alignParentRight="true"
+                android:gravity="right|center">
+
+                <ImageView
+                    android:id="@+id/threads"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/threads"
+                    android:layout_marginRight="20dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/post_plus"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/post_plus"
+                    android:layout_marginRight="20dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/three_line"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/three_line"
+                    android:layout_marginRight="10dp"
+                    />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/profile_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="15dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="8dp">
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:padding="5dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="15dp"
+                    >
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/shihab" />
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/plus"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:elevation="10dp"
+                        />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shihab Hridoy"
+                        android:fontFamily="@font/alata"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:weightSum="3">
+
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/post_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto"
+                                android:text="10"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="posts"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/follower_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto"
+                                android:text="99"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="followers"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/following_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/roboto"
+                                android:text="212"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="following"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginLeft="15dp"
+               android:layout_marginRight="10dp"
+               android:layout_marginBottom="10dp"
+               android:orientation="vertical">
+
+               <TextView
+                   android:id="@+id/bio"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Be like the sun ☀️\n\t keep on shining✨\nAnd let them burn 🔥\n\tBlood Group : B(+)"/>
+
+               <LinearLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="10dp">
+                   <ImageView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:src="@drawable/facebook_b_w"
+                       android:layout_gravity="bottom"/>
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Shihab Hridoy"
+                       android:fontFamily="@font/alata"
+                       android:layout_gravity="top"
+                       android:layout_marginLeft="5dp"
+                       android:textStyle="bold"
+                       android:textSize="14sp"
+                       android:textColor="@color/black"/>
+
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_marginTop="15dp"
+                   >
+
+                   <com.google.android.material.button.MaterialButton
+                       android:id="@+id/edit_profile"
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       app:cornerRadius="5dp"
+                       android:backgroundTint="#E9E7E7"
+                       android:text="Edit profile"
+                       android:textColor="@color/black"
+                       android:fontFamily="@font/roboto"
+                       android:textStyle="bold"
+                       android:layout_weight="0.35"
+                       android:layout_marginRight="7dp"/>
+
+                   <com.google.android.material.button.MaterialButton
+                       android:id="@+id/share_profile"
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       app:cornerRadius="5dp"
+                       android:backgroundTint="#E9E7E7"
+                       android:text="Share profile"
+                       android:textColor="@color/black"
+                       android:fontFamily="@font/roboto"
+                       android:textStyle="bold"
+                       android:layout_marginRight="7dp"
+                       android:layout_weight="0.50"/>
+
+                   <com.google.android.material.button.MaterialButton
+                       android:id="@+id/view_suggested_connection"
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       app:cornerRadius="5dp"
+                       android:backgroundTint="#E9E7E7"
+                       app:icon="@drawable/add_user"
+                       app:iconTint="@color/black"
+                       android:fontFamily="@font/roboto"
+                       android:textStyle="bold"
+                       android:layout_weight="0.15"/>
+
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:paddingTop="20dp"
+                   >
+
+                   <ImageView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:src="@drawable/rounded_plus"
+                       android:backgroundTint="@color/white"
+                       />
+
+                   <de.hdodenhof.circleimageview.CircleImageView
+                       android:layout_width="55dp"
+                       android:layout_height="55dp"
+                       android:src="@drawable/shihab"
+                       android:layout_marginLeft="20dp"
+                       app:civ_border_color="#D9D8D8"
+                       app:civ_border_width="4dp"
+                       />
+
+               </LinearLayout>
+
+           </LinearLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorColor="@color/black"
+                app:tabIconTint="#AFADAD"
+                >
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/grid"
+                    />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/reel"
+                    />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/user_photo_video"
+                    />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <FrameLayout
+                android:id="@+id/post_and_other_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+        
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

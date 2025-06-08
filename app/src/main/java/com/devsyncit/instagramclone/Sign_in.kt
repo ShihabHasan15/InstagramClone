@@ -2,27 +2,96 @@ package com.devsyncit.instagramclone
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.util.Patterns
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.button.MaterialButton
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.math.sign
 
 class Sign_in : AppCompatActivity() {
 
     lateinit var sign_up_txt: TextView
+    lateinit var login: MaterialButton
+    lateinit var useremail: EditText
+    lateinit var password: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
         sign_up_txt = findViewById(R.id.sign_up_txt)
+        login = findViewById(R.id.login_btn)
+        useremail = findViewById(R.id.email)
+        password = findViewById(R.id.password)
 
         sign_up_txt.setOnClickListener {
             startActivity(Intent(this, Sign_up::class.java))
         }
 
+        login.setOnClickListener {
 
+            var email = useremail.text.toString()
+            var password = password.text.toString()
+
+            if (email.isBlank() || password.isBlank()) {
+
+                Toast.makeText(this, "Please fill out the blank fields", Toast.LENGTH_LONG).show()
+
+            }else{
+
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                    Toast.makeText(this, "Enter a valid email address", Toast.LENGTH_LONG).show()
+                }else{
+
+                    val apiService = RetrofitInstance.getInstance().create(ApiService::class.java)
+
+                    apiService.loginUser(email, password).enqueue(object: Callback<ResponseBody>{
+                        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                            val responseBody = response.body()!!.string()
+
+                            Log.d("serverResponse", responseBody)
+
+                            var jsonObject = JSONObject(responseBody)
+
+                            var isSuccess = jsonObject.getBoolean("success")
+                            var message = jsonObject.getString("message")
+
+                            if (isSuccess){
+                                Toast.makeText(this@Sign_in, message, Toast.LENGTH_LONG).show()
+                                startActivity(Intent(this@Sign_in, MainActivity::class.java))
+                                finish()
+                            }else{
+                                Toast.makeText(this@Sign_in, message, Toast.LENGTH_LONG).show()
+                            }
+
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+
+                            Toast.makeText(this@Sign_in, "Failed", Toast.LENGTH_LONG).show()
+                            Log.d("f", ""+t.toString())
+
+                        }
+
+                    })
+
+
+                }
+
+            }
+
+        }
     }
 }

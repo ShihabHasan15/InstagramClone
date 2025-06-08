@@ -20,6 +20,7 @@ class HomeFragment : Fragment() {
         feed_list = view.findViewById(R.id.feed_list)
 
 
+
         return view
     }
 }

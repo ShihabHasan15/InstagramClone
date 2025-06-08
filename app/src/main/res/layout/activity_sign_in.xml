@@ -10,25 +10,24 @@
     android:padding="15dp">
 
 
-    <TextView
+    <ImageView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
-        android:text="@string/font"
-        android:textSize="30sp"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:src="@drawable/insta_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="112dp"/>
 
 
     <EditText
-        android:id="@+id/phone_username_email"
+        android:id="@+id/email"
         android:layout_width="350dp"
         android:layout_height="50dp"
         android:layout_marginTop="44dp"
         android:background="@drawable/edittext_background"
-        android:hint="Phone number, username, or email"
+        android:hint="Email"
         android:inputType="text"
         android:padding="12dp"
         android:textColor="#000"
@@ -55,7 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_username_email" />
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/login_btn"
