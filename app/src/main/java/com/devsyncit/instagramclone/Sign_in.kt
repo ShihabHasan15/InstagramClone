@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -25,6 +27,8 @@ class Sign_in : AppCompatActivity() {
     lateinit var login: MaterialButton
     lateinit var useremail: EditText
     lateinit var password: EditText
+    lateinit var database: FirebaseDatabase
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,12 @@ class Sign_in : AppCompatActivity() {
         login = findViewById(R.id.login_btn)
         useremail = findViewById(R.id.email)
         password = findViewById(R.id.password)
+
+
+        database = FirebaseDatabase.getInstance()
+        val dbRef = database.getReference("users")
+
+        auth = FirebaseAuth.getInstance()
 
         sign_up_txt.setOnClickListener {
             startActivity(Intent(this, Sign_up::class.java))
@@ -54,38 +64,20 @@ class Sign_in : AppCompatActivity() {
                     Toast.makeText(this, "Enter a valid email address", Toast.LENGTH_LONG).show()
                 }else{
 
-                    val apiService = RetrofitInstance.getInstance().create(ApiService::class.java)
+                    auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
 
-                    apiService.loginUser(email, password).enqueue(object: Callback<ResponseBody>{
-                        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+                                val user = auth.currentUser
+                                startActivity(Intent(this, MainActivity::class.java))
 
-                            val responseBody = response.body()!!.string()
+                            } else {
 
-                            Log.d("serverResponse", responseBody)
+                                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
 
-                            var jsonObject = JSONObject(responseBody)
-
-                            var isSuccess = jsonObject.getBoolean("success")
-                            var message = jsonObject.getString("message")
-
-                            if (isSuccess){
-                                Toast.makeText(this@Sign_in, message, Toast.LENGTH_LONG).show()
-                                startActivity(Intent(this@Sign_in, MainActivity::class.java))
-                                finish()
-                            }else{
-                                Toast.makeText(this@Sign_in, message, Toast.LENGTH_LONG).show()
                             }
-
                         }
-
-                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-
-                            Toast.makeText(this@Sign_in, "Failed", Toast.LENGTH_LONG).show()
-                            Log.d("f", ""+t.toString())
-
-                        }
-
-                    })
 
 
                 }

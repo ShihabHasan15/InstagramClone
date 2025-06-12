@@ -26,6 +26,14 @@ class MainActivity : AppCompatActivity() {
         bottomnav = findViewById(R.id.bottom_nav)
         toolbar = findViewById(R.id.toolbar)
 
+        val username = intent.getStringExtra("username")
+
+        val bundle = Bundle()
+        bundle.putString("username", username)
+
+        homeFragment.arguments = bundle
+        profileFragment.arguments = bundle
+
         supportFragmentManager.beginTransaction()
             .add(R.id.frame, profileFragment, "Profile").hide(profileFragment)
             .add(R.id.frame, homeFragment, "Home")

@@ -298,6 +298,7 @@
                        android:text="Edit profile"
                        android:textColor="@color/black"
                        android:fontFamily="@font/roboto"
+                       android:foreground="?attr/selectableItemBackground" android:clickable="true"
                        android:textStyle="bold"
                        android:layout_weight="0.35"
                        android:layout_marginRight="7dp"/>
@@ -386,10 +387,11 @@
 
             </com.google.android.material.tabs.TabLayout>
 
-            <FrameLayout
-                android:id="@+id/post_and_other_frame"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
         </LinearLayout>
         

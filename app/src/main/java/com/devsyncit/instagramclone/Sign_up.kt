@@ -1,9 +1,12 @@
 package com.devsyncit.instagramclone
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.JsonObject
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -27,6 +34,9 @@ class Sign_up : AppCompatActivity() {
     lateinit var full_name: EditText
     lateinit var username: EditText
     lateinit var login_txt: TextView
+    private lateinit var auth: FirebaseAuth
+    lateinit var database: FirebaseDatabase
+    lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +49,12 @@ class Sign_up : AppCompatActivity() {
         full_name = findViewById(R.id.full_name)
         username = findViewById(R.id.username)
         login_txt = findViewById(R.id.login_txt)
+        progressBar = findViewById(R.id.progressBar)
 
+        database = FirebaseDatabase.getInstance()
+        val dbRef = database.getReference("users")
+
+        auth = FirebaseAuth.getInstance()
 
         sign_up_btn.setOnClickListener {
 
@@ -60,30 +75,46 @@ class Sign_up : AppCompatActivity() {
 
                 }else{
 
-                    val apiService = RetrofitInstance.getInstance().create(ApiService::class.java)
+                    progressBar.visibility = View.VISIBLE
 
-                    apiService.signupUser(user_email, user_password, user_full_name, user_name)
-                        .enqueue(object : Callback<ResponseBody>{
-                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                                val responseBody = response.body()!!.string()
+                    auth.createUserWithEmailAndPassword(user_email, user_password)
+                        .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
 
-                                Log.d("responseBody", responseBody)
+                                val user = auth.currentUser
+                                val uid = user?.uid
 
-                                val jsonObject = JSONObject(responseBody)
+                                val userInfo = mapOf(
+                                    "fullname" to user_full_name,
+                                    "username" to user_name,
+                                    "email" to user_email,
+                                    "password" to user_password,
+                                    "pronounce" to "",
+                                    "bio" to ""
+                                )
 
-                                val isSuccess = jsonObject.getBoolean("success")
+                                dbRef.child(uid!!).setValue(userInfo).addOnSuccessListener {
 
-                                Toast.makeText(this@Sign_up, ""+jsonObject.getString("message"), Toast.LENGTH_LONG).show()
+                                    progressBar.visibility = View.GONE
+                                    Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+                                    finish()
 
+                                }.addOnFailureListener{
+
+                                    progressBar.visibility = View.GONE
+                                    Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                                    finish()
+
+                                    }
+
+
+                            } else {
+                                progressBar.visibility = View.GONE
+                                Toast.makeText(this, "Task is not successfull", Toast.LENGTH_SHORT).show()
                                 finish()
 
                             }
-
-                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                                Log.d("responseBody", ""+t.toString())
-                            }
-
-                        })
+                        }
 
                 }
 
