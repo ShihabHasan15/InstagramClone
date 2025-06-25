@@ -1,6 +1,8 @@
 package com.devsyncit.instagramclone
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +10,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
-class PostRecycleAdapter(var context: Context, var imageList: List<Int>): RecyclerView.Adapter<PostRecycleAdapter.PostViewHolder>() {
+class PostRecycleAdapter(var context: Context, var imageList: List<String>): RecyclerView.Adapter<PostRecycleAdapter.PostViewHolder>() {
 
     class PostViewHolder(itemView: View): ViewHolder(itemView) {
 
@@ -32,7 +34,12 @@ class PostRecycleAdapter(var context: Context, var imageList: List<Int>): Recycl
 
         var image = imageList.get(position)
 
-        holder.imageView.setImageResource(image)
+        image.let {
+            val decoded = Base64.decode(it, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+
+            holder.imageView.setImageBitmap(bitmap)
+        }
 
     }
 

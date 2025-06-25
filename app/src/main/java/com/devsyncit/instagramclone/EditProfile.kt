@@ -23,7 +23,11 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,6 +46,12 @@ class EditProfile : AppCompatActivity() {
     lateinit var username_edittext: TextInputEditText
     lateinit var pronounce_edittext: TextInputEditText
     lateinit var bio_edittext: TextInputEditText
+    lateinit var databaseRef: DatabaseReference
+
+    val auth = FirebaseAuth.getInstance()
+    var user = auth.currentUser
+
+    var uid = user?.uid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +67,56 @@ class EditProfile : AppCompatActivity() {
         username_edittext = findViewById(R.id.username_edittext)
         pronounce_edittext = findViewById(R.id.pronounce_edittext)
         bio_edittext = findViewById(R.id.bio_edittext)
+        databaseRef = FirebaseDatabase.getInstance().getReference("users")
+
+        databaseRef.child(uid!!).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (snapshot.exists()){
+
+                    var bio = snapshot.child("bio").getValue(String::class.java)
+                    var username = snapshot.child("username").getValue(String::class.java)
+                    var name = snapshot.child("fullname").getValue(String::class.java)
+                    var pronounce = snapshot.child("pronounce").getValue(String::class.java)
+
+                    name_edittext.setText(name)
+                    username_edittext.setText(username)
+                    pronounce_edittext.setText(pronounce)
+                    bio_edittext.setText(bio)
+
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+
+        databaseRef = FirebaseDatabase.getInstance().getReference("userProfilePics")
+
+        databaseRef.child(uid!!).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (snapshot.exists()){
+                    var encodedImg = snapshot.getValue(String::class.java)
+
+                    encodedImg?.let {
+                        val decoded = Base64.decode(it, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+
+                        profileImage.setImageBitmap(bitmap)
+
+                    }
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
 
         switchBack.setCardBackgroundColor(Color.LTGRAY)
 
@@ -100,45 +160,57 @@ class EditProfile : AppCompatActivity() {
             colorAnimation.start()
         }
 
-        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result ->
-            if (result.resultCode == RESULT_OK && result.data != null){
-                var imageUri = result.data!!.data
-                lifecycleScope.launch {
-                    try {
+        activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK && result.data != null) {
+                    var imageUri = result.data!!.data
+                    lifecycleScope.launch {
+                        try {
 
-                        val compressedBase64Image = withContext(Dispatchers.IO) {
-                            val inputStream = contentResolver.openInputStream(imageUri!!)
-                            val originalBitmap = BitmapFactory.decodeStream(inputStream)
+                            val compressedBase64Image = withContext(Dispatchers.IO) {
+                                val inputStream = contentResolver.openInputStream(imageUri!!)
+                                val originalBitmap = BitmapFactory.decodeStream(inputStream)
 
-                            val exif = ExifInterface(contentResolver.openInputStream(imageUri)!!)
-                            val orientation = exif.getAttributeInt(
-                                ExifInterface.TAG_ORIENTATION,
-                                ExifInterface.ORIENTATION_NORMAL
-                            )
+                                val exif =
+                                    ExifInterface(contentResolver.openInputStream(imageUri)!!)
+                                val orientation = exif.getAttributeInt(
+                                    ExifInterface.TAG_ORIENTATION,
+                                    ExifInterface.ORIENTATION_NORMAL
+                                )
 
-                            val rotatedBitmap = rotateBitmapIfRequired(originalBitmap, orientation)
-                            val resizedBitmap = resizeBitmap(rotatedBitmap, 800)
+                                val rotatedBitmap =
+                                    rotateBitmapIfRequired(originalBitmap, orientation)
+                                val resizedBitmap = resizeBitmap(rotatedBitmap, 800)
 
-                            val stream = ByteArrayOutputStream()
-                            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
-                            val compressedBytes = stream.toByteArray()
+                                val stream = ByteArrayOutputStream()
+                                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+                                val compressedBytes = stream.toByteArray()
 
-                            Base64.encodeToString(compressedBytes, Base64.DEFAULT) to resizedBitmap
+                                Base64.encodeToString(
+                                    compressedBytes,
+                                    Base64.DEFAULT
+                                ) to resizedBitmap
+                            }
+
+                            val (base64Image, resizedBitmap) = compressedBase64Image
+                            selectedBase64Image = base64Image
+                            profileImage.setImageBitmap(resizedBitmap)
+
+                        } catch (e: IOException) {
+                            e.printStackTrace()
                         }
-
-                        val (base64Image, resizedBitmap) = compressedBase64Image
-                        selectedBase64Image = base64Image
-                        profileImage.setImageBitmap(resizedBitmap)
-
-                    } catch (e: IOException) {
-                        e.printStackTrace()
                     }
                 }
             }
-        }
 
-        profileImage.setOnClickListener {
-            Log.d("ProfileImage", "Clicked!")
+//        profileImage.setOnClickListener {
+//            Log.d("ProfileImage", "Clicked!")
+//            var intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//            activityResultLauncher.launch(intent)
+//        }
+
+
+        change_profile_txt.setOnClickListener {
             var intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             activityResultLauncher.launch(intent)
         }
@@ -188,9 +260,12 @@ class EditProfile : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
 
         if (selectedBase64Image != null) {
-            val database = FirebaseDatabase.getInstance().getReference("userProfilePics").child(uid!!)
+            val database =
+                FirebaseDatabase.getInstance().getReference("userProfilePics").child(uid!!)
             database.setValue(selectedBase64Image).addOnCompleteListener {
-            Toast.makeText(this, "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+                progressBar.visibility = View.GONE
+                super.onBackPressed()
 
             }.addOnFailureListener {
                 progressBar.visibility = View.GONE
@@ -201,7 +276,7 @@ class EditProfile : AppCompatActivity() {
             super.onBackPressed()
         }
 
-        if (!name.isBlank() || !username.isBlank() || !pronounce.isBlank() || !bio.isBlank()){
+        if (!name.isBlank() || !username.isBlank() || !pronounce.isBlank() || !bio.isBlank()) {
 
             val userInfo = mapOf(
                 "fullname" to name,

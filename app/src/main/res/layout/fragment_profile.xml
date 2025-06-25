@@ -127,7 +127,7 @@
                         android:id="@+id/profile_image"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@drawable/shihab" />
+                        android:src="@drawable/user" />
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"

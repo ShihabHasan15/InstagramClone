@@ -1,15 +1,28 @@
 package com.devsyncit.instagramclone
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class PostsFragment : Fragment() {
     lateinit var postRecycle: RecyclerView
+    lateinit var dbRef: DatabaseReference
+
+    val auth = FirebaseAuth.getInstance()
+    var user = auth.currentUser
+
+    var uid = user?.uid
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -17,21 +30,43 @@ class PostsFragment : Fragment() {
 
         postRecycle = postsView.findViewById(R.id.postRecycle)
 
-        var imageList = listOf(
-            R.drawable.shihab, R.drawable.shihab,
-            R.drawable.shihab, R.drawable.shihab,
-            R.drawable.shihab, R.drawable.shihab,
-            R.drawable.shihab, R.drawable.shihab,
-            R.drawable.shihab, R.drawable.shihab
-        )
+        var imageList = ArrayList<String>()
 
-        var postRecycleAdapter = PostRecycleAdapter(requireContext(), imageList)
+        dbRef = FirebaseDatabase.getInstance().getReference("Posts")
 
-        postRecycle.adapter = postRecycleAdapter
+        Log.d("userId", uid.toString())
 
-        var gridLayoutManager = GridLayoutManager(requireContext(),3)
+        dbRef.child(uid!!).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
 
-        postRecycle.layoutManager = gridLayoutManager
+                imageList.clear()
+
+                Log.d("childCount", snapshot.childrenCount.toString())
+
+                for (postSnap in snapshot.children){
+                    val postKey = postSnap.key
+
+                    val image = postSnap.child("image").getValue(String::class.java)
+                    Log.d("images", image!!)
+                    imageList.add(image!!)
+                }
+
+                Log.d("imageList", imageList.size.toString())
+
+                var postRecycleAdapter = PostRecycleAdapter(requireContext(), imageList)
+
+                postRecycle.adapter = postRecycleAdapter
+
+                var gridLayoutManager = GridLayoutManager(requireContext(),3)
+
+                postRecycle.layoutManager = gridLayoutManager
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
 
         return postsView
     }
