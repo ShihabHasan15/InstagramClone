@@ -31,6 +31,7 @@ class PostsFragment : Fragment() {
         postRecycle = postsView.findViewById(R.id.postRecycle)
 
         var imageList = ArrayList<String>()
+        var postList = ArrayList<String>()
 
         dbRef = FirebaseDatabase.getInstance().getReference("Posts")
 
@@ -40,11 +41,14 @@ class PostsFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 imageList.clear()
+                postList.clear()
 
                 Log.d("childCount", snapshot.childrenCount.toString())
 
                 for (postSnap in snapshot.children){
                     val postKey = postSnap.key
+
+                    postList.add(postKey!!)
 
                     val image = postSnap.child("image").getValue(String::class.java)
                     Log.d("images", image!!)
@@ -53,7 +57,7 @@ class PostsFragment : Fragment() {
 
                 Log.d("imageList", imageList.size.toString())
 
-                var postRecycleAdapter = PostRecycleAdapter(requireContext(), imageList)
+                var postRecycleAdapter = PostRecycleAdapter(requireContext(), imageList, postList)
 
                 postRecycle.adapter = postRecycleAdapter
 

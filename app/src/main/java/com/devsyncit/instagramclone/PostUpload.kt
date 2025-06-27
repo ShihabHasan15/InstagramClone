@@ -127,7 +127,12 @@ class PostUpload : AppCompatActivity() {
                 post.put("date", LocalDate.now().toString())
                 post.put("time", LocalTime.now().toString())
 
-                databaseReference.child(uid!!).push().setValue(post).addOnSuccessListener {
+                var postRef = databaseReference.child(uid!!).push()
+                var postId = postRef.key
+
+                post.put("id", postId!!)
+
+                postRef.setValue(post).addOnSuccessListener {
 
                     Toast.makeText(this, "Post Uploaded", Toast.LENGTH_SHORT).show()
                     finish()
