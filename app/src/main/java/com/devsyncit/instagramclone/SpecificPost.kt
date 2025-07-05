@@ -3,7 +3,10 @@ package com.devsyncit.instagramclone
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -11,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,6 +22,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
+import de.hdodenhof.circleimageview.CircleImageView
 
 class SpecificPost : AppCompatActivity() {
 
@@ -29,6 +34,7 @@ class SpecificPost : AppCompatActivity() {
     lateinit var reaction_count: TextView
     lateinit var postImage: ImageView
     lateinit var profileSmallImage: ImageView
+    lateinit var comment_icon: ImageView
     var count: Int = 0
     lateinit var dbRef: DatabaseReference
 
@@ -47,6 +53,7 @@ class SpecificPost : AppCompatActivity() {
         PostCaption = findViewById(R.id.caption)
         postImage = findViewById(R.id.postImage)
         profileSmallImage = findViewById(R.id.profileSmallImage)
+        comment_icon = findViewById(R.id.comment_icon)
 
 
         //user name get and set
@@ -95,9 +102,9 @@ class SpecificPost : AppCompatActivity() {
 
         //listeners
 
-        dbRef = FirebaseDatabase.getInstance().getReference("Posts")
+        dbRef = FirebaseDatabase.getInstance().getReference("postlikes")
 
-        val postRef = dbRef.child(uid).child(postId!!)
+        val postRef = dbRef.child(postId!!)
 
         love_react.setOnClickListener {
             love_react.visibility = View.INVISIBLE
@@ -137,7 +144,6 @@ class SpecificPost : AppCompatActivity() {
                 var date = snapshot.child("date").getValue(String::class.java)
                 var id = snapshot.child("id").getValue(String::class.java)
                 var image = snapshot.child("image").getValue(String::class.java)
-                var like = snapshot.child("like").getValue(String::class.java)
                 var time = snapshot.child("like").getValue(String::class.java)
 
                 PostCaption.text = caption
@@ -149,17 +155,27 @@ class SpecificPost : AppCompatActivity() {
                     postImage.setImageBitmap(bitmap)
                 }
 
-                count = like!!.toInt()
+                val db = FirebaseDatabase.getInstance().getReference("postlikes")
 
+                db.child(id!!).addValueEventListener(object : ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        var like = snapshot.child("like").getValue(String::class.java)
 
-                if (count==0){
-                    reaction_count.visibility = View.GONE
-                }else{
-                    reaction_count.visibility = View.VISIBLE
-                    reaction_count.text = count.toString()
-                }
+                        count = like!!.toInt()
 
+                        if (count==0){
+                            reaction_count.visibility = View.GONE
+                        }else{
+                            reaction_count.visibility = View.VISIBLE
+                            reaction_count.text = count.toString()
+                        }
 
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -167,6 +183,38 @@ class SpecificPost : AppCompatActivity() {
             }
         })
 
+
+        comment_icon.setOnClickListener {
+            showCommentSheet()
+        }
+
+
+
+    }
+
+    private fun showCommentSheet() {
+
+        var commentSheet = LayoutInflater.from(this).inflate(R.layout.comment_sheet_design, null)
+
+        var comment_recycle = commentSheet.findViewById<RecyclerView>(R.id.comment_recycle)
+        var user_photo = commentSheet.findViewById<CircleImageView>(R.id.user_photo)
+        var comment_edittext = commentSheet.findViewById<EditText>(R.id.comment_edittext)
+        var send_btn = commentSheet.findViewById<ImageButton>(R.id.send_button)
+        var no_cmnt_txt = commentSheet.findViewById<TextView>(R.id.no_cmnt_txt)
+        var start_cmnt_txt = commentSheet.findViewById<TextView>(R.id.start_cmnt_txt)
+
+
+        var comment = comment_edittext.text.toString()
+
+        var postId = intent.getStringExtra("postId")
+
+        if (!comment.isEmpty()){
+
+            var dbReference = FirebaseDatabase.getInstance().getReference("comments")
+
+//            dbReference.child(postId!!).push().setValue()
+
+        }
 
 
 
