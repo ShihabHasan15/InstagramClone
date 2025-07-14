@@ -1,10 +1,12 @@
 package com.devsyncit.instagramclone
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -14,7 +16,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import de.hdodenhof.circleimageview.CircleImageView
+import java.time.LocalDate
+import java.time.LocalTime
 
 class SpecificPost : AppCompatActivity() {
 
@@ -54,7 +60,6 @@ class SpecificPost : AppCompatActivity() {
         postImage = findViewById(R.id.postImage)
         profileSmallImage = findViewById(R.id.profileSmallImage)
         comment_icon = findViewById(R.id.comment_icon)
-
 
         //user name get and set
 
@@ -161,7 +166,7 @@ class SpecificPost : AppCompatActivity() {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         var like = snapshot.child("like").getValue(String::class.java)
 
-                        count = like!!.toInt()
+                        count = like?.toIntOrNull() ?: 0
 
                         if (count==0){
                             reaction_count.visibility = View.GONE
@@ -169,7 +174,6 @@ class SpecificPost : AppCompatActivity() {
                             reaction_count.visibility = View.VISIBLE
                             reaction_count.text = count.toString()
                         }
-
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -196,6 +200,17 @@ class SpecificPost : AppCompatActivity() {
 
         var commentSheet = LayoutInflater.from(this).inflate(R.layout.comment_sheet_design, null)
 
+
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(commentSheet)
+
+        bottomSheetDialog.setOnShowListener { dialog ->
+            val d = dialog as BottomSheetDialog
+            val bottomSheet = d.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+            bottomSheet?.requestLayout()
+        }
+
         var comment_recycle = commentSheet.findViewById<RecyclerView>(R.id.comment_recycle)
         var user_photo = commentSheet.findViewById<CircleImageView>(R.id.user_photo)
         var comment_edittext = commentSheet.findViewById<EditText>(R.id.comment_edittext)
@@ -204,18 +219,169 @@ class SpecificPost : AppCompatActivity() {
         var start_cmnt_txt = commentSheet.findViewById<TextView>(R.id.start_cmnt_txt)
 
 
-        var comment = comment_edittext.text.toString()
-
         var postId = intent.getStringExtra("postId")
 
-        if (!comment.isEmpty()){
 
-            var dbReference = FirebaseDatabase.getInstance().getReference("comments")
 
-//            dbReference.child(postId!!).push().setValue()
+        val currentUser = FirebaseAuth.getInstance().currentUser?.uid
 
+        val profileGetDb = FirebaseDatabase.getInstance().getReference("userProfilePics")
+
+        profileGetDb.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val profilePic = snapshot.child(currentUser!!).getValue(String::class.java)
+
+                profilePic.let {
+                    val decoded = Base64.decode(it, Base64.DEFAULT)
+                    val bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+
+                    user_photo.setImageBitmap(bitmap)
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+
+
+
+
+        val commentList = mutableListOf<HashMap<String, String>>()
+        val commentLoadDb = FirebaseDatabase.getInstance().getReference("postComments")
+
+        var commentRecycleAdapter = CommentRecycleAdapter(this, commentList)
+        comment_recycle.adapter = commentRecycleAdapter
+        comment_recycle.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+
+        commentLoadDb.child(postId!!).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                commentList.clear()
+
+                for (userSnapshot in snapshot.children){
+
+                    for (commentSnap in userSnapshot.children){
+                        val commentMap = hashMapOf<String, String>()
+
+                        val comment = commentSnap.child("comment").getValue(String::class.java)
+                        val commentId = commentSnap.child("commentId").getValue(String::class.java)
+                        val commenterName = commentSnap.child("name").getValue(String::class.java)
+                        val profileImage = commentSnap.child("profileImage").getValue(String::class.java)
+                        val userId = commentSnap.child("userId").getValue(String::class.java)
+                        val date = commentSnap.child("date").getValue(String::class.java)
+                        val time = commentSnap.child("time").getValue(String::class.java)
+
+                        commentMap["comment"] = comment?: ""
+                        commentMap["commentId"] = commentId?: ""
+                        commentMap["commenterName"] = commenterName?: ""
+                        commentMap["profileImage"] = profileImage?: ""
+                        commentMap["userId"] = userId?: ""
+                        commentMap["date"] = date?: ""
+                        commentMap["time"] = time?: ""
+
+                        commentList.add(commentMap)
+                    }
+
+                }
+
+                if (commentList.isNotEmpty()) {
+
+                    no_cmnt_txt.visibility = View.GONE
+                    start_cmnt_txt.visibility = View.GONE
+
+                    commentRecycleAdapter.notifyDataSetChanged()
+
+                } else {
+                    no_cmnt_txt.visibility = View.VISIBLE
+                    start_cmnt_txt.visibility = View.VISIBLE
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+
+
+        send_btn.setOnClickListener {
+            var comment = comment_edittext.text.toString()
+
+            val currentUser = FirebaseAuth.getInstance().currentUser?.uid
+
+            val userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(currentUser!!)
+
+            if (!comment.isEmpty()){
+
+                userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val username = snapshot.child("username").getValue(String::class.java)
+
+                        val profilePicRef =
+                            FirebaseDatabase.getInstance().getReference("userProfilePics")
+
+                        profilePicRef.addListenerForSingleValueEvent(object :
+                            ValueEventListener {
+                            @SuppressLint("NewApi")
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                val profilePic =
+                                    snapshot.child(currentUser).getValue(String::class.java)
+
+                                val commentDb = FirebaseDatabase.getInstance()
+                                    .getReference("postComments")
+                                    .child(postId!!)
+                                    .child(currentUser)
+
+                                val commentId = commentDb.push().key!!
+
+                                val commentMap = hashMapOf(
+                                    "commentId" to commentId,
+                                    "userId" to currentUser,
+                                    "name" to username,
+                                    "profileImage" to profilePic,
+                                    "comment" to comment,
+                                    "date" to LocalDate.now().toString(), // server‑side time
+                                    "time" to LocalTime.now().toString() // server‑side time
+                                )
+
+                                commentDb.child(commentId).setValue(commentMap)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            comment_edittext.text.clear()
+                                        } else {
+                                            Toast.makeText(
+                                                this@SpecificPost,
+                                                "Failed: ${task.exception?.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+
+                            }
+                        })
+
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
+            }
         }
 
+        bottomSheetDialog.show()
 
 
     }

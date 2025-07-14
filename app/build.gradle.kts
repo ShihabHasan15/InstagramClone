@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -43,6 +44,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.espresso.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -53,4 +55,13 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-auth")
+
+//stream
+    implementation ("io.getstream:stream-chat-android-ui-components:6.18.0")
+    implementation ("io.getstream:stream-chat-android-offline:6.18.0")
+    // Client only
+    implementation ("io.getstream:stream-chat-android-client:6.18.0")
+
+    //agora
+    implementation("io.agora.rtc:full-sdk:4.5.0")
 }

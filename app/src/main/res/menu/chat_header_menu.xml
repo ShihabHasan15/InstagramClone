@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_audio_call"
+        android:icon="@drawable/audio_call"
+        android:title="Audio Call"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_video_call"
+        android:icon="@drawable/video_call"
+        android:title="Video Call"
+        app:showAsAction="always" />
+</menu>

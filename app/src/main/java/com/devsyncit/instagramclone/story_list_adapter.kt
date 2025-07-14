@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.hdodenhof.circleimageview.CircleImageView
@@ -18,6 +19,7 @@ class story_list_adapter(var context: Context, var storyList: List<Story>): Recy
     class my_story_holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var myImage = itemView.findViewById<ImageView>(R.id.my_story)
+        var story = itemView.findViewById<RelativeLayout>(R.id.story)
 
     }
 
@@ -67,6 +69,10 @@ class story_list_adapter(var context: Context, var storyList: List<Story>): Recy
                 var userImage = my_story.userImage
 
                 my_story_holder.myImage.setImageResource(userImage)
+
+            my_story_holder.story.setOnClickListener {
+
+            }
 
         }else{
 

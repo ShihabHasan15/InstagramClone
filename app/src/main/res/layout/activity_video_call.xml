@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VideoCallActivity">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/video_call_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <!-- Remote user video (fullscreen) -->
+        <FrameLayout
+            android:id="@+id/remote_user"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Local user video (small preview) -->
+        <FrameLayout
+            android:id="@+id/local_user"
+            android:layout_width="120dp"
+            android:layout_height="160dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/local_video_rounded_bg"
+            android:elevation="8dp"
+            android:layout_gravity="top|end" />
+
+        <!-- Top User Info -->
+        <LinearLayout
+            android:id="@+id/userInfoLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_gravity="top|start">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userProfileImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/shihab" />
+
+            <TextView
+                android:id="@+id/userNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shihab Hasan"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/alata" />
+        </LinearLayout>
+
+        <!-- Bottom Control Buttons -->
+        <LinearLayout
+            android:id="@+id/callControlButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="30dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="32dp"
+            android:weightSum="3">
+
+            <ImageButton
+                android:id="@+id/btn_mute"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_button_bg"
+                android:src="@drawable/mic"
+                android:tint="@color/white"
+                android:scaleType="centerInside" />
+
+            <ImageButton
+                android:id="@+id/btn_end_call"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/round_button_red"
+                android:src="@drawable/call_drop"
+                android:tint="#FFFFFF"
+                android:scaleType="centerInside" />
+
+            <ImageButton
+                android:id="@+id/btn_switch_camera"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_button_bg"
+                android:src="@drawable/camera_switch"
+                android:tint="#FFFFFF"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,13 +42,13 @@ class HomeFragment : Fragment() {
 
         var storyList = listOf(
             Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.shihab, "shi_15")
+            Story("", R.drawable.zilani, "mdzilani"),
+            Story("", R.drawable.nobel, "nazmul_nobel"),
+            Story("", R.drawable.emon, "emon_03"),
+            Story("", R.drawable.riaz, "riaz.mahmud"),
+            Story("", R.drawable.jubayer, "jubayer.hossain"),
+            Story("", R.drawable.elon, "eLon_rev_musk"),
+            Story("", R.drawable.billgates, "billgates")
         )
 
         var story_list_adapter = story_list_adapter(requireContext(), storyList)
@@ -58,6 +58,18 @@ class HomeFragment : Fragment() {
         story_list.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
+
+        //story setting
+
+
+
+
+
+
+
+
+
+        //feed setting
         dbRef = FirebaseDatabase.getInstance().getReference("followers")
         val feedPosts = mutableListOf<HashMap<String, String>>()
         val addedPostIds = HashSet<String>()
@@ -123,8 +135,11 @@ class HomeFragment : Fragment() {
                                         likeDb.child(postId).addListenerForSingleValueEvent(object : ValueEventListener{
                                             override fun onDataChange(snapshot: DataSnapshot) {
 
-                                                var like = snapshot.child("like").getValue(String::class.java)
-                                                postMap.put("like", like!!)
+                                               // var like = snapshot.child("like").value?.toString() ?: "0"
+
+                                                val like = snapshot.child("like").value?.toString() ?: "0"
+
+                                                postMap.put("like", like)
 
                                                 Log.d("like", like)
                                                 feedPosts.add(postMap)

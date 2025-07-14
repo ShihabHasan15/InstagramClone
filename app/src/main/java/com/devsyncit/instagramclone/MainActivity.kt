@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     
     lateinit var bottomnav: BottomNavigationView
     lateinit var toolbar: MaterialToolbar
+    lateinit var messengerIcon: ImageView
     var homeFragment = HomeFragment()
     var profileFragment = ProfileFragment()
     var postUploadFragment = PostUploadFragment()
@@ -34,6 +36,13 @@ class MainActivity : AppCompatActivity() {
 
         bottomnav = findViewById(R.id.bottom_nav)
         toolbar = findViewById(R.id.toolbar)
+        messengerIcon = findViewById(R.id.messenger_icon)
+
+
+        messengerIcon.setOnClickListener {
+            startActivity(Intent(this, MessageActivity::class.java))
+        }
+
 
         val username = intent.getStringExtra("username")
 

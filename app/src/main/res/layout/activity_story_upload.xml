@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FAF9F9"
+    tools:context=".StoryUpload">
+    
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/story_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/white">
+
+            <ImageButton
+                android:id="@+id/back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back_arrow"
+                android:backgroundTint="@color/white"
+                android:layout_marginRight="10dp"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Story"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:fontFamily="@font/alata"
+                />
+
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+
+        <ImageView
+            android:id="@+id/story_preview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/shihab"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@+id/story_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/select_image_btn"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/select_image_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Select Image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/upload_btn"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="32dp"/>
+
+        <!-- Upload Button -->
+        <Button
+            android:id="@+id/upload_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Upload Story"
+            android:backgroundTint="#03A9F4"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="32dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

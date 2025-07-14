@@ -37,6 +37,7 @@ class ProfileFragment : Fragment() {
     lateinit var usernameTxt: TextView
     lateinit var nameTxt: TextView
     lateinit var bioTxt: TextView
+    lateinit var fb_name: TextView
     var activeFragment: Fragment = postFragment
 
     val auth = FirebaseAuth.getInstance()
@@ -55,6 +56,7 @@ class ProfileFragment : Fragment() {
         usernameTxt = view.findViewById(R.id.username)
         nameTxt = view.findViewById(R.id.name)
         bioTxt = view.findViewById(R.id.bio)
+        fb_name = view.findViewById(R.id.fb_name)
 
 
 
@@ -140,6 +142,7 @@ class ProfileFragment : Fragment() {
                 var name = snapshot.child("fullname").getValue(String::class.java)
 
                 nameTxt.text = name
+                fb_name.text = name
                  
                 var bio = snapshot.child("bio").getValue(String::class.java)
 

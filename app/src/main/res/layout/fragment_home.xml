@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".HomeFragment">
 
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,23 +16,26 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/story_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
                 />
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/feed_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
                 android:clipToPadding="false"
                 android:paddingBottom="80dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
                 />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
 </FrameLayout>
