@@ -1,6 +1,8 @@
 package com.devsyncit.instagramclone
 
 import android.app.Application
+import android.util.Log
+import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
@@ -14,19 +16,22 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = true,
-                userPresence = true,
-            ),
-            appContext = applicationContext
-        )
+        Log.d("MyApp", "Application started, registering lifecycle observer")
 
-        val offlinePluginFactory = StreamOfflinePluginFactory(applicationContext)
+//        val statePluginFactory = StreamStatePluginFactory(
+//            config = StatePluginConfig(
+//                backgroundSyncEnabled = true,
+//                userPresence = true,
+//            ),
+//            appContext = applicationContext
+//        )
+//
+//        val offlinePluginFactory = StreamOfflinePluginFactory(applicationContext)
+//
+//        ChatClient.Builder(getString(R.string.stream_api_key), applicationContext)
+//            .withPlugins(statePluginFactory, offlinePluginFactory)
+//            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+//            .build()
 
-        ChatClient.Builder(getString(R.string.stream_api_key), applicationContext)
-            .withPlugins(statePluginFactory, offlinePluginFactory)
-            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
-            .build()
     }
 }

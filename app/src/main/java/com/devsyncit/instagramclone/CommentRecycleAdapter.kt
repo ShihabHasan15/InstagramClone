@@ -19,6 +19,7 @@ class CommentRecycleAdapter(var context: Context, var commentList: List<HashMap<
         var name_txt = itemView.findViewById<TextView>(R.id.name_txt)
         var comment_txt = itemView.findViewById<TextView>(R.id.comment_txt)
         var reply_txt = itemView.findViewById<TextView>(R.id.reply_txt)
+        var date_txt = itemView.findViewById<TextView>(R.id.date)
 
     }
 
@@ -51,6 +52,7 @@ class CommentRecycleAdapter(var context: Context, var commentList: List<HashMap<
 
         commentHolder.comment_txt.text = commentText
         commentHolder.name_txt.text = commenterName
+        commentHolder.date_txt.text = date
 
        profileImage.let {
             val decoded = Base64.decode(it, Base64.DEFAULT)

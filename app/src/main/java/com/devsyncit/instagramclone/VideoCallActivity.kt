@@ -2,8 +2,10 @@ package com.devsyncit.instagramclone
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import android.view.SurfaceView
 import android.view.View
 import android.widget.FrameLayout
@@ -72,6 +74,9 @@ class VideoCallActivity : AppCompatActivity() {
         btn_switch_camera = findViewById(R.id.btn_switch_camera)
 
         channelName = intent.getStringExtra("channelName").toString()
+        var userId = intent.getStringExtra("userId").toString()
+        var userfullname = intent.getStringExtra("userFullName").toString()
+        var ProfileImage = intent.getStringExtra("profileImage").toString()
 
         setUpVideoSdkEngine()
 
@@ -85,6 +90,15 @@ class VideoCallActivity : AppCompatActivity() {
             joinCall()
         }
 
+
+        ProfileImage.let {
+            val decoded = Base64.decode(it, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+
+            userProfileImage.setImageBitmap(bitmap)
+        }
+
+        userNameText.text = userfullname
 
         btn_mute.setOnClickListener {
             toggleMute()
@@ -101,6 +115,13 @@ class VideoCallActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        leaveCall()
+        finish()
+    }
+
 
     private fun checkSelfPermission(): Boolean{
 
@@ -164,7 +185,10 @@ class VideoCallActivity : AppCompatActivity() {
         override fun onUserJoined(uid: Int, elapsed: Int) {
             showMessage("Remote user joined")
 
-            runOnUiThread { setUpRemoteVideo(uid) }
+            runOnUiThread {
+                setUpRemoteVideo(uid)
+                local_user.bringToFront()
+            }
         }
 
         override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
@@ -202,7 +226,7 @@ class VideoCallActivity : AppCompatActivity() {
         agoraEngine!!.setupRemoteVideo(
             VideoCanvas(
                 remoteSurfaceView,
-                VideoCanvas.RENDER_MODE_FIT,
+                VideoCanvas.RENDER_MODE_HIDDEN,
                 uid
             )
         )
@@ -210,12 +234,13 @@ class VideoCallActivity : AppCompatActivity() {
 
     private fun setUpLocalVideo(){
         localSurfaceView = SurfaceView(baseContext)
+        localSurfaceView!!.setZOrderMediaOverlay(true)
         local_user.addView(localSurfaceView)
 
         agoraEngine!!.setupLocalVideo(
             VideoCanvas(
                 localSurfaceView,
-                VideoCanvas.RENDER_MODE_FIT,
+                VideoCanvas.RENDER_MODE_HIDDEN,
                 0
             )
         )

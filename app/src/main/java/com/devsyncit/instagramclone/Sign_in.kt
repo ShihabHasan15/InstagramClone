@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -68,9 +69,12 @@ class Sign_in : AppCompatActivity() {
                         .addOnCompleteListener(this) { task ->
                             if (task.isSuccessful) {
 
+                                ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifeCycleObserver())
+
                                 Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
                                 val user = auth.currentUser
                                 startActivity(Intent(this, MainActivity::class.java))
+                                finish()
 
                             } else {
 

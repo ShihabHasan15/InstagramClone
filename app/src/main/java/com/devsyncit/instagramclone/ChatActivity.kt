@@ -1,14 +1,19 @@
 package com.devsyncit.instagramclone
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Base64
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +22,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import de.hdodenhof.circleimageview.CircleImageView
+import java.util.Timer
+import java.util.TimerTask
 
 class ChatActivity : AppCompatActivity() {
 
@@ -31,7 +38,11 @@ class ChatActivity : AppCompatActivity() {
     var messageList: MutableList<String> = mutableListOf()
     var senderList: MutableList<String> = mutableListOf()
 
+    var chatRoomId = ""
+
     val uid = FirebaseAuth.getInstance().currentUser?.uid //current user id
+
+    var typingRef = FirebaseDatabase.getInstance().getReference("typingStatus")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,23 +88,86 @@ class ChatActivity : AppCompatActivity() {
 
         audioCall.setOnClickListener {
 
+            val intent = Intent(this, AudioCallActivity::class.java)
+            val channelName = if (uid!! < userId!!) "${uid}_${userId}" else "${userId}_${uid}"
+            intent.putExtra("channelName", channelName)
+            intent.putExtra("userId", userId)
+            intent.putExtra("userFullName", userfullname)
+            intent.putExtra("profileImage", profileImage)
+            startActivity(intent)
+
         }
 
         videoCall.setOnClickListener {
             val intent = Intent(this, VideoCallActivity::class.java)
             val channelName = if (uid!! < userId!!) "${uid}_${userId}" else "${userId}_${uid}"
             intent.putExtra("channelName", channelName)
+            intent.putExtra("userId", userId)
+            intent.putExtra("userFullName", userfullname)
+            intent.putExtra("profileImage", profileImage)
             startActivity(intent)
         }
 
+        //typing status
+
+        messageInputLayout.addTextChangedListener(object : TextWatcher{
+
+            private var typingTimer: Timer? = null
+            private val TYPING_DELAY = 2000L
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                setTypingStatus(true)
+
+                typingTimer?.cancel()
+                typingTimer = Timer()
+                typingTimer?.schedule(object : TimerTask() {
+                    override fun run() {
+                        (messageInputLayout.context as Activity).runOnUiThread {
+                            setTypingStatus(false)
+                        }
+                    }
+                }, TYPING_DELAY)
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+        })
+
+        //typing status watch of other user
+
+        chatRoomId = generateChatRoomID(uid!!, userId!!)
+
+        val typingWatchRef = FirebaseDatabase.getInstance()
+            .getReference("typingStatus")
+            .child(chatRoomId)
+            .child(userId!!)
+
+        typingWatchRef.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val isTyping = snapshot.getValue(Boolean::class.java) ?: false
+                if (isTyping) {
+                    userIsTyping.text = "${userfullname?.split(" ")?.get(0)} is typing..."
+                    userIsTyping.visibility = View.VISIBLE
+                } else {
+                    userIsTyping.visibility = View.GONE
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
         //====================================
 
-        val chatRoomId = generateChatRoomID(uid!!, userId!!)
+
 
         val messageRef = FirebaseDatabase.getInstance().getReference("messages").child(chatRoomId)
-
-
-
 
         sendBtn.setOnClickListener {
 
@@ -145,6 +219,11 @@ class ChatActivity : AppCompatActivity() {
 
     }//onCreate
 
+    fun setTypingStatus(isTyping: Boolean){
+        if (uid != null) {
+            typingRef.child(chatRoomId).child(uid).setValue(isTyping)
+        }
+    }
 
     fun generateChatRoomID(user1: String, user2: String): String {
         return if (user1.compareTo(user2) < 0) {

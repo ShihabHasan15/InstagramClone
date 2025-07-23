@@ -1,8 +1,11 @@
 package com.devsyncit.instagramclone
 
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -14,7 +17,10 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -38,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         messengerIcon = findViewById(R.id.messenger_icon)
 
+        askNotificationPermission()
 
         messengerIcon.setOnClickListener {
             startActivity(Intent(this, MessageActivity::class.java))
@@ -136,6 +143,7 @@ class MainActivity : AppCompatActivity() {
 
                     storyTxt.setOnClickListener {
                         popupWindow.dismiss()
+                        startActivity(Intent(this@MainActivity, StoryUpload::class.java))
                     }
 
 
@@ -155,4 +163,58 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
+
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // FCM SDK (and your app) can post notifications.
+        } else {
+            // TODO: Inform user that that your app will not show notifications.
+        }
+    }
+
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                // FCM SDK (and your app) can post notifications.
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+
+                android.app.AlertDialog.Builder(this)
+                    .setTitle("Notification Permission")
+                    .setMessage("Permission needed for better experience")
+                    .setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
+
+                    })
+                    .setPositiveButton("Ok", DialogInterface.OnClickListener { dialogInterface, i ->
+                        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    })
+                    .create().show()
+
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+
+    override fun onBackPressed() {
+        when (activeFragment) {
+            profileFragment -> {
+                bottomnav.selectedItemId = R.id.home
+            }
+            postUploadFragment -> {
+                bottomnav.selectedItemId = R.id.home
+            }
+            homeFragment -> {
+                super.onBackPressed()
+            }
+        }
+    }
+
 }

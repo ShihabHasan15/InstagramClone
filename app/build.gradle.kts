@@ -45,6 +45,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -54,6 +56,7 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-auth")
 
 //stream
@@ -64,4 +67,9 @@ dependencies {
 
     //agora
     implementation("io.agora.rtc:full-sdk:4.5.0")
+
+    implementation ("androidx.lifecycle:lifecycle-process:2.6.2")
+
+    //glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 }
