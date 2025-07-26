@@ -25,6 +25,11 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class MainActivity : AppCompatActivity() {
     
@@ -45,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         messengerIcon = findViewById(R.id.messenger_icon)
 
         askNotificationPermission()
+        deleteOldStories()
 
         messengerIcon.setOnClickListener {
             startActivity(Intent(this, MessageActivity::class.java))
@@ -215,6 +221,35 @@ class MainActivity : AppCompatActivity() {
                 super.onBackPressed()
             }
         }
+    }
+
+    private fun deleteOldStories(){
+        val uid = FirebaseAuth.getInstance().uid
+
+        val storyDb = FirebaseDatabase.getInstance().getReference("Stories").child(uid!!)
+
+        storyDb.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentTime = System.currentTimeMillis()
+
+                val twentyFourHourMillis = 24 * 60 * 60 * 1000
+
+                for (storySnap in snapshot.children){
+                    val storyUploadedTime = storySnap.child("time").getValue(Long::class.java)
+
+                    if (storyUploadedTime != null && currentTime - storyUploadedTime >= twentyFourHourMillis)
+                    {
+                        storySnap.ref.removeValue()
+                    }
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
 }

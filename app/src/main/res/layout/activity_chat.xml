@@ -60,6 +60,7 @@
                 android:fontFamily="@font/alata"
                 android:textSize="12sp"
                 android:textColor="#767676"
+                android:visibility="gone"
                 />
 
         </LinearLayout>

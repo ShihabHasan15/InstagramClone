@@ -59,12 +59,6 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-auth")
 
-//stream
-    implementation ("io.getstream:stream-chat-android-ui-components:6.18.0")
-    implementation ("io.getstream:stream-chat-android-offline:6.18.0")
-    // Client only
-    implementation ("io.getstream:stream-chat-android-client:6.18.0")
-
     //agora
     implementation("io.agora.rtc:full-sdk:4.5.0")
 

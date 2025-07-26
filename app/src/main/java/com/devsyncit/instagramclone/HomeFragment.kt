@@ -24,6 +24,8 @@ class HomeFragment : Fragment() {
     lateinit var story_list: RecyclerView
     lateinit var feed_list: RecyclerView
 
+    lateinit var storyMap: HashMap<String, Any>
+
     lateinit var dbRef: DatabaseReference
 
     val user = FirebaseAuth.getInstance().currentUser
@@ -40,23 +42,106 @@ class HomeFragment : Fragment() {
         story_list = view.findViewById(R.id.story_list)
         feed_list = view.findViewById(R.id.feed_list)
 
-        var storyList = listOf(
-            Story("", R.drawable.shihab, "shi_15"),
-            Story("", R.drawable.zilani, "mdzilani"),
-            Story("", R.drawable.nobel, "nazmul_nobel"),
-            Story("", R.drawable.emon, "emon_03"),
-            Story("", R.drawable.riaz, "riaz.mahmud"),
-            Story("", R.drawable.jubayer, "jubayer.hossain"),
-            Story("", R.drawable.elon, "eLon_rev_musk"),
-            Story("", R.drawable.billgates, "billgates")
-        )
+        val followersStoryList = mutableListOf<Story>()
 
-        var story_list_adapter = story_list_adapter(requireContext(), storyList)
+        var story_list_adapter = story_list_adapter(requireContext(), followersStoryList)
 
         story_list.adapter = story_list_adapter
 
         story_list.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+
+        val userDb = FirebaseDatabase.getInstance().getReference("users")
+
+        userDb.child(uid!!).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val name = snapshot.child("fullname").getValue(String::class.java)
+
+                val profileImageDb = FirebaseDatabase.getInstance().getReference("userProfilePics")
+
+                profileImageDb.addValueEventListener(object : ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val profileImage = snapshot.child(uid).getValue(String::class.java)
+
+                        followersStoryList.removeAll { it.userName == name }
+
+                        var story = Story(userImage = profileImage, userName = name)
+
+                        followersStoryList.add(0, story)
+
+                        story_list_adapter.notifyDataSetChanged()
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+
+        val followersDb = FirebaseDatabase.getInstance().getReference("followers").child(uid!!)
+
+        followersDb.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for (followSnap in snapshot.children){
+                    val name = followSnap.child("name").getValue(String::class.java)
+                    val profileImage = followSnap.child("profileImage").getValue(String::class.java)
+                    val userId = followSnap.child("userId").getValue(String::class.java)
+
+                    val storyDb = FirebaseDatabase.getInstance().getReference("Stories")
+
+                    storyDb.addValueEventListener(object : ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+
+                            for(userSnapshot in snapshot.children){
+                                val storyDbUserId = userSnapshot.key
+
+                                if (userId.equals(storyDbUserId)){
+                                    val story = Story(profileImage, name)
+                                    followersStoryList.add(story)
+                                    story_list_adapter.notifyDataSetChanged()
+                                }
+
+                            }
+
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+
+//        var storyList = listOf(
+//            Story("", R.drawable.shihab, "shi_15"),
+//            Story("", R.drawable.zilani, "mdzilani"),
+//            Story("", R.drawable.nobel, "nazmul_nobel"),
+//            Story("", R.drawable.emon, "emon_03"),
+//            Story("", R.drawable.riaz, "riaz.mahmud"),
+//            Story("", R.drawable.jubayer, "jubayer.hossain"),
+//            Story("", R.drawable.elon, "eLon_rev_musk"),
+//            Story("", R.drawable.billgates, "billgates")
+//        )
+
+
 
 
         //story setting

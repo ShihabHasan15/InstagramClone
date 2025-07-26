@@ -3,13 +3,6 @@ package com.devsyncit.instagramclone
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 
 class MyApplication : Application() {
 

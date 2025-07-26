@@ -1,5 +1,6 @@
 package com.devsyncit.instagramclone
 
+import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,16 @@ class GalleryAdapter(val imageList: List<Uri>): RecyclerView.Adapter<GalleryAdap
             .load(imageList[position])
             .centerCrop()
             .into(holder.imageView)
+
+        holder.imageView.setOnClickListener {
+
+            val context = holder.itemView.context
+            val intent = Intent(context, StoryFullScreenActivity::class.java)
+            intent.putExtra("selectedImage", imageList[position].toString())
+            context.startActivity(intent)
+
+        }
+        
 
     }
 

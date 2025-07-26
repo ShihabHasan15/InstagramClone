@@ -7,7 +7,7 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -32,6 +32,9 @@
         android:theme="@style/Theme.InstagramClone"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".StoryFullScreenActivity"
+            android:exported="false" />
         <activity
             android:name=".AudioCallActivity"
             android:exported="false" />
@@ -84,7 +87,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>

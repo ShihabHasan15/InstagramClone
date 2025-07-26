@@ -1,7 +1,10 @@
 package com.devsyncit.instagramclone
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Image
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,11 +67,17 @@ class story_list_adapter(var context: Context, var storyList: List<Story>): Recy
 
                 var my_story = storyList.get(position)
 
-                var content = my_story.content
                 var userName = my_story.userName
                 var userImage = my_story.userImage
 
-                my_story_holder.myImage.setImageResource(userImage)
+
+                userImage.let {
+                    val decoded = Base64.decode(it, Base64.DEFAULT)
+                    val bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+
+                    my_story_holder.myImage.setImageBitmap(bitmap)
+                }
+
 
             my_story_holder.story.setOnClickListener {
 
@@ -81,12 +90,17 @@ class story_list_adapter(var context: Context, var storyList: List<Story>): Recy
 
                 var other_story = storyList.get(position)
 
-                var content = other_story.content
                 var userName = other_story.userName
                 var userImage = other_story.userImage
 
             other_story_holder.username.text = userName
-            other_story_holder.userimage.setImageResource(userImage)
+
+            userImage.let {
+                val decoded = Base64.decode(it, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+
+                other_story_holder.userimage.setImageBitmap(bitmap)
+            }
 
         }
 

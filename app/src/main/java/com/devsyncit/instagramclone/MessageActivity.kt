@@ -24,24 +24,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Config
-import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.viewmodel.channels.bindView
-import io.getstream.result.then
+
 
 class MessageActivity : AppCompatActivity() {
 
